@@ -20,13 +20,15 @@
 
   <body>
     <!-- app bar -->
-    <header>
-      <h1><i class="fas fa-stream"></i> Shopping <span>List</span></h1>
-      <button><i class="fas fa-ellipsis-v"></i></button>
+    <header class="shadow">
+      <div class="wrapper">
+        <h1><i class="fas fa-stream"></i> Shopping <span>List</span></h1>
+        <button><i class="fas fa-ellipsis-v"></i></button>
+      </div>
     </header>
 
     <!-- drawer -->
-    <div>
+    <div id="drawer">
       <button>Clear list</button>
       <button>Print list</button>
       <button>Export as pdf</button>
@@ -35,89 +37,91 @@
     </div>
 
     <main>
-      <!-- form container -->
-      <div>
-        <form>
-          <label for="name">product</label>
-          <input type="text" id="name" />
-
-          <label for="category">category</label>
-          <input type="text" list="category-list" id="category" />
-          <datalist id="category-list">
-            <option value="Bakery"></option>
-            <option value="Vegetables"></option>
-            <option value="Fruits"></option>
-            <option value="Dairy"></option>
-            <option value="Meat"></option>
-            <option value="Cleaners"></option>
-            <option value="Personal Care"></option>
-            <option value="Paper Goods"></option>
-            <option value="Other"></option>
-          </datalist>
-
-          <label for="amount">amount</label>
-          <input type="number" id="amount" />
-
-          <label for="pieces">pieces</label>
-          <input type="radio" id="pieces" name="type" checked />
-          <label for="kg">kg</label>
-          <input type="radio" id="kg" name="type" />
-
-          <button type="submit">add</button>
-        </form>
-      </div>
-
-      <!-- shopping lists container -->
-      <div>
-        <!-- dairy -->
+      <div class="wrapper">
+        <!-- form container -->
         <div>
-          <!-- list title -->
+          <form>
+            <label for="name">product</label>
+            <input type="text" id="name" />
+
+            <label for="category">category</label>
+            <input type="text" list="category-list" id="category" />
+            <datalist id="category-list">
+              <option value="Bakery"></option>
+              <option value="Vegetables"></option>
+              <option value="Fruits"></option>
+              <option value="Dairy"></option>
+              <option value="Meat"></option>
+              <option value="Cleaners"></option>
+              <option value="Personal Care"></option>
+              <option value="Paper Goods"></option>
+              <option value="Other"></option>
+            </datalist>
+
+            <label for="amount">amount</label>
+            <input type="number" id="amount" />
+
+            <label for="pieces">pieces</label>
+            <input type="radio" id="pieces" name="type" checked />
+            <label for="kg">kg</label>
+            <input type="radio" id="kg" name="type" />
+
+            <button type="submit">add</button>
+          </form>
+        </div>
+
+        <!-- shopping lists container -->
+        <div>
+          <!-- dairy -->
           <div>
-            <p>DAIRY <span>(3 pieces, 0.4 kg)</span></p>
-            <button><i class="fas fa-angle-up"></i></button>
-          </div>
-          <!-- list items -->
-          <div>
-            <input type="checkbox" />
-            <p>1x Milk</p>
+            <!-- list title -->
             <div>
-              <button><i class="fas fa-pen"></i></button>
-              <button><i class="fas fa-trash-alt"></i></button>
+              <p>DAIRY <span>(3 pieces, 0.4 kg)</span></p>
+              <button><i class="fas fa-angle-up"></i></button>
+            </div>
+            <!-- list items -->
+            <div>
+              <input type="checkbox" />
+              <p>1x Milk</p>
+              <div>
+                <button><i class="fas fa-pen"></i></button>
+                <button><i class="fas fa-trash-alt"></i></button>
+              </div>
+            </div>
+            <div>
+              <input type="checkbox" />
+              <p>0.4kg of Cheese</p>
+              <div>
+                <button><i class="fas fa-pen"></i></button>
+                <button><i class="fas fa-trash-alt"></i></button>
+              </div>
+            </div>
+            <div>
+              <input type="checkbox" />
+              <p>2x Butter</p>
+              <div>
+                <button><i class="fas fa-pen"></i></button>
+                <button><i class="fas fa-trash-alt"></i></button>
+              </div>
             </div>
           </div>
+
+          <!-- Bakery -->
           <div>
-            <input type="checkbox" />
-            <p>0.4kg of Cheese</p>
             <div>
-              <button><i class="fas fa-pen"></i></button>
-              <button><i class="fas fa-trash-alt"></i></button>
-            </div>
-          </div>
-          <div>
-            <input type="checkbox" />
-            <p>2x Butter</p>
-            <div>
-              <button><i class="fas fa-pen"></i></button>
-              <button><i class="fas fa-trash-alt"></i></button>
+              <p class="">Bakery <span>(11 pieces)</span></p>
+              <button><i class="fas fa-angle-down"></i></button>
             </div>
           </div>
         </div>
 
-        <!-- Bakery -->
+        <!-- more button -->
+        <button>MORE</button>
+
+        <!-- counter for products -->
         <div>
-          <div>
-            <p>Bakery <span>(11 pieces)</span></p>
-            <button><i class="fas fa-angle-down"></i></button>
-          </div>
+          <p>Total: 14 pieces and 0.4 kg</p>
         </div>
-      </div>
-
-      <!-- more button -->
-      <button>MORE</button>
-
-      <!-- counter for products -->
-      <div>
-        <p>Total: 14 pieces and 0.4 kg</p>
       </div>
     </main>
 

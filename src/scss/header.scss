@@ -1,0 +1,35 @@
+header {
+  width: 100%;
+  height: 3em;
+  position: fixed;
+  background: white;
+  z-index: 8;
+
+  h1 {
+    font-size: 2em;
+
+    i,
+    span {
+      color: $primary;
+    }
+  }
+
+  .wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      position: absolute;
+      right: 0;
+      font-size: 1.5em;
+
+      color: (var(--bs-gray-dark));
+    }
+  }
+
+  &.shadow {
+    box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.15);
+  }
+}

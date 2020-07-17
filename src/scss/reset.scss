@@ -1,0 +1,33 @@
+body,
+ul,
+li,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-size: 16px;
+}
+
+.wrapper {
+  height: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+main {
+  padding-top: 3rem;
+}
+
+button {
+  background: none;
+  border: none;
+}
