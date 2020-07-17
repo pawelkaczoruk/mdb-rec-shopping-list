@@ -39,32 +39,45 @@
     <main>
       <div class="wrapper">
         <!-- form container -->
-        <div>
+        <div class="form-container">
           <form>
-            <label for="name">product</label>
-            <input type="text" id="name" />
+            <div class="input-wrapper">
+              <label for="name">product</label>
+              <input type="text" id="name" placeholder="eg. Milk" />
+            </div>
 
-            <label for="category">category</label>
-            <input type="text" list="category-list" id="category" />
-            <datalist id="category-list">
-              <option value="Bakery"></option>
-              <option value="Vegetables"></option>
-              <option value="Fruits"></option>
-              <option value="Dairy"></option>
-              <option value="Meat"></option>
-              <option value="Cleaners"></option>
-              <option value="Personal Care"></option>
-              <option value="Paper Goods"></option>
-              <option value="Other"></option>
-            </datalist>
+            <div class="input-wrapper">
+              <label for="amount">amount</label>
+              <input type="number" id="amount" placeholder="eg. 1" />
+            </div>
 
-            <label for="amount">amount</label>
-            <input type="number" id="amount" />
+            <div class="radio-group">
+              <label for="pieces"
+                >pieces
+                <input type="radio" id="pieces" name="type" checked />
+              </label>
 
-            <label for="pieces">pieces</label>
-            <input type="radio" id="pieces" name="type" checked />
-            <label for="kg">kg</label>
-            <input type="radio" id="kg" name="type" />
+              <label for="kg"
+                >kg
+                <input type="radio" id="kg" name="type" />
+              </label>
+            </div>
+
+            <div class="input-wrapper">
+              <label for="category">category</label>
+              <input type="text" list="category-list" id="category" placeholder="eg. Dairy" />
+              <datalist id="category-list">
+                <option value="Bakery"></option>
+                <option value="Vegetables"></option>
+                <option value="Fruits"></option>
+                <option value="Dairy"></option>
+                <option value="Meat"></option>
+                <option value="Cleaners"></option>
+                <option value="Personal Care"></option>
+                <option value="Paper Goods"></option>
+                <option value="Other"></option>
+              </datalist>
+            </div>
 
             <button type="submit">add</button>
           </form>
