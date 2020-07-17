@@ -3,6 +3,7 @@ header {
   height: 3em;
   position: fixed;
   background: white;
+  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.2);
   z-index: 8;
 
   h1 {
@@ -21,15 +22,21 @@ header {
     align-items: center;
 
     button {
+      width: 2.5rem;
+      height: 2.5rem;
       position: absolute;
       right: 0;
       font-size: 1.5em;
-
       color: (var(--bs-gray-dark));
-    }
-  }
+      border-radius: 50%;
 
-  &.shadow {
-    box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.2);
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.15);
+        
+        i {
+          color: black;
+        }
+      }
+    }
   }
 }
