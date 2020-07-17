@@ -7,6 +7,7 @@
   font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto;
+  overflow: hidden;
 
   form {
     display: flex;
@@ -25,6 +26,10 @@
     padding-left: 0.5em;
     flex: 1;
     color: var(--bs-gray-dark);
+
+    &[type="text"], &[type="number"] {
+      min-width: 120px;
+    }
   }
 
   label {
@@ -43,6 +48,8 @@
   }
 
   .radio-group {
+    margin-bottom: 0.5rem;
+
     label:last-child {
       margin-left: 1em;
     }

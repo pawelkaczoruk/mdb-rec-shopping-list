@@ -21,10 +21,12 @@ body {
   height: 100%;
   max-width: 1024px;
   margin: 0 auto;
+  padding: 0 5px;
+  position: relative;
 }
 
 main {
-  padding-top: 4rem;
+  padding: 4rem 0 2rem 0;
 }
 
 button {

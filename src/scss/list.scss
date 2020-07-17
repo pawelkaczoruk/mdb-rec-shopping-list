@@ -2,6 +2,7 @@
   margin-top: 1em;
   border-radius: 0.5em 0.5em 0 0;
   border: 2px solid $primary;
+  overflow: hidden;
 }
 
 .list-item, .list-header, .list-item-content {
@@ -12,7 +13,7 @@
 
 .list-item, .list-header {
   padding: 0 1em;
-  height: 2.5em;
+  min-height: 2.5em;
 }
 
 .list-header {
@@ -51,7 +52,19 @@
 }
 
 .list-item-actions {
+  min-width: 60px;
+
   button {
     color: var(--bs-gray-dark);
+  }
+}
+
+.list-summary {
+  border: none;
+  border-radius: 0 0 0.5em 0.5em;
+  overflow: hidden;
+
+  .list-header {
+    background-color: $green;
   }
 }
