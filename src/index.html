@@ -53,14 +53,14 @@
             </div>
 
             <div class="radio-group">
-              <label for="pieces"
-                >pieces
-                <input type="radio" id="pieces" name="type" checked />
+              <label for="items">
+                items
+                <input type="radio" id="items" name="type" value="items" checked />
               </label>
 
-              <label for="kg"
-                >kg
-                <input type="radio" id="kg" name="type" />
+              <label for="kg">
+                kg
+                <input type="radio" id="kg" name="type" value="kg" />
               </label>
             </div>
 
@@ -85,61 +85,11 @@
         </div>
 
         <!-- shopping lists container -->
-        <div>
-          <!-- dairy -->
-          <div class="list">
-            <!-- list title -->
-            <div class="list-header">
-              <p>Dairy <span>(3 pieces, 0.4 kg)</span></p>
-              <button><i class="fas fa-caret-up"></i></button>
-            </div>
-            <!-- list items -->
-            <div class="list-content">
-              <div class="list-item">
-                <div class="list-item-content">
-                  <input type="checkbox" />
-                  <p>1x Milk</p>
-                </div>
-                <div class="list-item-actions">
-                  <button><i class="fas fa-pen"></i></button>
-                  <button><i class="fas fa-trash-alt"></i></button>
-                </div>
-              </div>
-              <div class="list-item">
-                <div class="list-item-content">
-                  <input type="checkbox" />
-                  <p>0.4 kg of Cheese sdfds d sfds dsfdsf dsf</p>
-                </div>
-                <div class="list-item-actions">
-                  <button><i class="fas fa-pen"></i></button>
-                  <button><i class="fas fa-trash-alt"></i></button>
-                </div>
-              </div>
-              <div class="list-item">
-                <div class="list-item-content">
-                  <input type="checkbox" />
-                  <p>2x Butter</p>
-                </div>
-                <div class="list-item-actions">
-                  <button><i class="fas fa-pen"></i></button>
-                  <button><i class="fas fa-trash-alt"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Bakery -->
-          <div class="list">
-            <div class="list-header">
-              <p class="">Bakery <span>(11 pieces)</span></p>
-              <button><i class="fas fa-caret-down"></i></button>
-            </div>
-          </div>
-
+        <div id="list-container">
           <!-- counter for products -->
           <div class="list list-summary">
             <div class="list-header">
-              <p>Total 14 pieces and 0.4 kg</p>
+              <p></p>
               <button><i class="fas fa-trash-alt"></i></button>
             </div>
           </div>
@@ -163,14 +113,14 @@
           </div>
   
           <div class="radio-group">
-            <label for="pieces-edit"
-              >pieces
-              <input type="radio" id="pieces-edit" name="type-edit" checked />
+            <label for="items-edit">
+              items
+              <input type="radio" id="items-edit" name="type-edit" value="items" checked />
             </label>
   
-            <label for="kg-edit"
-              >kg
-              <input type="radio" id="kg-edit" name="type-edit" />
+            <label for="kg-edit">
+              kg
+              <input type="radio" id="kg-edit" name="type-edit" value="kg" />
             </label>
           </div>
   

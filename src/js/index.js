@@ -1,5 +1,4 @@
-import * as mdb from 'mdb-ui-kit';
+// import Product from './Product.js';
+import UI from './UI';
 
-export default {
-  mdb,
-};
+UI.displayList();

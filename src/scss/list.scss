@@ -11,6 +11,14 @@
   align-items: center;
 }
 
+.list-content {
+  display: none;
+}
+
+.list-content.list-expanded {
+  display: block;
+}
+
 .list-item, .list-header {
   padding: 0.3em 1em;
   min-height: 2.5em;
