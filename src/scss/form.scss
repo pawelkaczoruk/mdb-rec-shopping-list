@@ -27,7 +27,8 @@
     flex: 1;
     color: var(--bs-gray-dark);
 
-    &[type="text"], &[type="number"] {
+    &[type='text'],
+    &[type='number'] {
       min-width: 120px;
     }
   }
@@ -56,6 +57,19 @@
 
     label:last-child {
       margin-left: 1em;
+    }
+  }
+
+  .error-message {
+    display: none;
+    padding-bottom: 0.5rem;
+    font-size: 0.7em;
+    font-weight: 500;
+    color: red;
+    text-align: center;
+
+    &.show {
+      display: block;
     }
   }
 }

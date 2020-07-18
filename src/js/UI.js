@@ -7,9 +7,20 @@ export default class UI {
 
     products.forEach((obj) => {
       UI.createList(obj);
+      obj.products.map((product) => UI.addProductToList(product, obj.category));
     });
 
     UI.updateListSummary(products);
+  }
+
+  static addProductToList(product, category) {
+    const listContent = document.querySelector(`#${category}-list .list-content`);
+    const listItem = document.createElement('div');
+
+    listItem.className = 'list-item';
+    listItem.innerHTML = UI.createListItem(product);
+
+    listContent.appendChild(listItem);
   }
 
   static createList(obj) {
@@ -29,7 +40,6 @@ export default class UI {
         </button>
       </div>
       <div class="list-content ${obj.expand ? 'list-expanded' : ''}">
-        ${obj.products.map((product) => UI.createListItem(product)).join('')}
       </div>
     `;
 
@@ -38,18 +48,16 @@ export default class UI {
 
   static createListItem(product) {
     return `
-      <div class="list-item">
-        <div class="list-item-content">
-          <input type="checkbox" ${product.checked ? 'checked' : ''}/>
-          <p>${product.amount}${product.type === 'items' ? 'x' : ''} 
-          ${product.type === 'kg' ? 'kg of' : ''} 
-          ${UI.textFormatter(product.name)}
-          </p>
-        </div>
-        <div class="list-item-actions">
-          <button><i class="fas fa-pen"></i></button>
-          <button><i class="fas fa-trash-alt"></i></button>
-        </div>
+      <div class="list-item-content">
+        <input type="checkbox" ${product.checked ? 'checked' : ''}/>
+        <p>${product.amount}${product.type === 'items' ? 'x' : ''} 
+        ${product.type === 'kg' ? 'kg of' : ''} 
+        ${UI.textFormatter(product.name)}
+        </p>
+      </div>
+      <div class="list-item-actions">
+        <button><i class="fas fa-pen"></i></button>
+        <button><i class="fas fa-trash-alt"></i></button>
       </div>
     `;
   }
@@ -63,7 +71,15 @@ export default class UI {
 
     return `${
       total.hasOwnProperty('items') ? `${total.items} ${total.items >= 2 ? 'items' : 'item'}` : ''
-    }${total.hasOwnProperty('kg') ? ` and ${total.kg} kg` : ''}`;
+    }${total.hasOwnProperty('items') && total.hasOwnProperty('kg') ? ' and ' : ''}${
+      total.hasOwnProperty('kg') ? `${total.kg} kg` : ''
+    }`;
+  }
+
+  static clearForm() {
+    document.querySelector('#name').value = '';
+    document.querySelector('#amount').value = '';
+    document.querySelector('#category').value = '';
   }
 
   static textFormatter(text) {
@@ -80,5 +96,31 @@ export default class UI {
 
     const allProducts = products.reduce((acc, cur) => [...acc, ...cur.products], []);
     listSummaryText.innerText = `Total ${UI.getTotalProducts(allProducts)}`;
+  }
+
+  static showError(messages, textElement) {
+    textElement.classList.add('show');
+    textElement.innerText = messages.join(', ');
+  }
+
+  static hideError(textElement) {
+    textElement.classList.remove('show');
+    textElement.innerText = '';
+  }
+
+  static validate(name, amount, category, textElement) {
+    const errorMessages = [];
+
+    if (name === '') errorMessages.push('name is required');
+    if (amount <= 0) errorMessages.push('amount must be number higher than 0');
+    if (category === '') errorMessages.push('category is required');
+
+    if (!errorMessages.length) {
+      UI.hideError(textElement);
+      return true;
+    }
+
+    UI.showError(errorMessages, textElement);
+    return false;
   }
 }
