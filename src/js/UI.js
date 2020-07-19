@@ -13,6 +13,7 @@ export default class UI {
     });
 
     UI.updateListSummary();
+    UI.addSortable();
   }
 
   static addProductToList(product, category) {
@@ -103,15 +104,26 @@ export default class UI {
     else listItem.remove();
   }
 
-  static addSortable(category) {
-    const listBody = document.querySelector(`
+  static addSortable(category = null) {
+    let container;
+    let item;
+
+    if (category === null) {
+      container = document.querySelector('#list-container');
+      item = '.list-body';
+    } else {
+      container = document.querySelector(`
       #list-container div[data-category="${category}"] .list-content`);
+      item = '.list-item';
+    }
+
     // add drag and drop using sortable.js
-    Sortable.create(listBody, {
+    Sortable.create(container, {
       animation: 150,
-      draggable: '.list-item',
+      draggable: item,
       onUpdate: (e) => {
-        Store.changeProductIndex(e.newIndex, e.oldIndex, category);
+        if (category === null) Store.changeListIndex(e.newIndex, e.oldIndex);
+        else Store.changeProductIndex(e.newIndex, e.oldIndex, category);
       },
     });
   }

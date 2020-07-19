@@ -37,8 +37,17 @@ export default class Store {
   static changeProductIndex(newIndex, oldIndex, category) {
     const list = Store.getList();
     // update list items
-    const item = list[Store.getCategoryIndex(category)].products.splice(oldIndex, 1);
-    list[Store.getCategoryIndex(category)].products.splice(newIndex, 0, item[0]);
+    const tempProduct = list[Store.getCategoryIndex(category)].products.splice(oldIndex, 1)[0];
+    list[Store.getCategoryIndex(category)].products.splice(newIndex, 0, tempProduct);
+    // apply changes to store
+    localStorage.setItem('list', JSON.stringify(list));
+  }
+
+  static changeListIndex(newIndex, oldIndex) {
+    const list = Store.getList();
+    // update list indexes
+    const tempList = list.splice(oldIndex, 1)[0];
+    list.splice(newIndex, 0, tempList);
     // apply changes to store
     localStorage.setItem('list', JSON.stringify(list));
   }
