@@ -9,6 +9,11 @@ export default class Store {
     return list;
   }
 
+  static getItem(index, category) {
+    const list = Store.getList();
+    return list[Store.getCategoryIndex(category)].products[index];
+  }
+
   static addCategory(category) {
     const list = Store.getList();
     list.push(category);
@@ -17,15 +22,36 @@ export default class Store {
 
   static addProduct(product, category) {
     const list = Store.getList();
+    // push product to list
+    list[Store.getCategoryIndex(category)].products.push(product);
+    localStorage.setItem('list', JSON.stringify(list));
+  }
+
+  static updateProduct(product, index, category) {
+    const list = Store.getList();
+    // update product
+    list[Store.getCategoryIndex(category)].products[index] = product;
+    localStorage.setItem('list', JSON.stringify(list));
+  }
+
+  static toggleCategoryExpand(category) {
+    const list = Store.getList();
+    list[Store.getCategoryIndex(category)].expand = !list[Store.getCategoryIndex(category)].expand;
+    localStorage.setItem('list', JSON.stringify(list));
+  }
+
+  static getCategoryIndex(category) {
+    const list = Store.getList();
+    let index;
 
     for (let i = 0; i < list.length; i++) {
       if (list[i].category === category) {
-        list[i].products.push(product);
+        index = i;
         break;
       }
     }
 
-    localStorage.setItem('list', JSON.stringify(list));
+    return index;
   }
 
   static clearList() {
@@ -34,17 +60,12 @@ export default class Store {
 
   static removeProduct(index, category) {
     const list = Store.getList();
+    const categoryIndex = Store.getCategoryIndex(category);
 
-    for (let i = 0; i < list.length; i++) {
-      if (list[i].category === category) {
-        // remove item from category
-        list[i].products.splice(index, 1);
-
-        // remove whole category if there are no products in it
-        if (!list[i].products.length) list.splice(i, 1);
-        break;
-      }
-    }
+    // remove item from category
+    list[categoryIndex].products.splice(index, 1);
+    // remove whole category list if there are no products in it
+    if (!list[categoryIndex].products.length) list.splice(categoryIndex, 1);
 
     localStorage.setItem('list', JSON.stringify(list));
   }

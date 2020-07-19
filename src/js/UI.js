@@ -11,7 +11,7 @@ export default class UI {
       UI.updateListHeader(obj.category);
     });
 
-    UI.updateListSummary(list);
+    UI.updateListSummary();
   }
 
   static addProductToList(product, category) {
@@ -30,7 +30,7 @@ export default class UI {
     listContainer.forEach((elem) => elem.remove());
 
     // update total counter
-    UI.updateListSummary([]);
+    UI.updateListSummary();
   }
 
   static createList(obj) {
@@ -43,8 +43,8 @@ export default class UI {
     list.innerHTML = `
       <div class="list-header">
         <p>${UI.textFormatter(obj.category)}<span></span></p>
-        <button>
-          <i class="fas fa-caret-${obj.expand ? 'up' : 'down'}"></i>
+        <button class="expand">
+          <i class="expand fas fa-caret-${obj.expand ? 'up' : 'down'}"></i>
         </button>
       </div>
       <div class="list-content ${obj.expand ? 'list-expanded' : ''}">
@@ -102,13 +102,13 @@ export default class UI {
   }
 
   static updateListHeader(category) {
-    const list = Store.getList().find((obj) => obj.category === category);
-
+    const list = Store.getList()[Store.getCategoryIndex(category)];
     const textElement = document.querySelector(`#${category}-list .list-header span`);
     textElement.innerText = ` (${UI.getTotalProducts(list.products)})`;
   }
 
-  static updateListSummary(list) {
+  static updateListSummary() {
+    const list = Store.getList();
     const listSummaryText = document.querySelector('#list-container .list-summary p');
 
     if (!list.length) {
@@ -118,6 +118,38 @@ export default class UI {
 
     const allProducts = list.reduce((acc, cur) => [...acc, ...cur.products], []);
     listSummaryText.innerText = `Total ${UI.getTotalProducts(allProducts)}`;
+  }
+
+  static closeEditModal() {
+    document.querySelector('.edit-modal').classList.remove('show');
+
+    // clear form inputs
+    document.querySelector('#name-edit').value = '';
+    document.querySelector('#amount-edit').value = '';
+    document.querySelector('#category-edit').value = '';
+
+    const form = document.querySelector('.edit-modal form');
+    // clear data atributes
+    form.removeAttribute('data-index');
+    form.removeAttribute('data-category');
+  }
+
+  static openEditModal(index, productCategory) {
+    document.querySelector('.edit-modal').classList.add('show');
+
+    // get selected product from store
+    const product = Store.getItem(index, productCategory);
+
+    // set form inputs
+    document.querySelector('#name-edit').value = UI.textFormatter(product.name);
+    document.querySelector('#amount-edit').value = product.amount;
+    document.querySelector(`#${product.type}-edit`).checked = true;
+    document.querySelector('#category-edit').value = UI.textFormatter(productCategory);
+
+    const form = document.querySelector('.edit-modal form');
+    // save information in data atribute for ediding product
+    form.dataset.index = index;
+    form.dataset.category = productCategory;
   }
 
   static showError(messages, textElement) {

@@ -13,7 +13,9 @@ document.querySelector('main form').addEventListener('submit', (e) => {
   // get form values
   const name = document.querySelector('#name').value.toLowerCase();
   const amount = Number(document.querySelector('#amount').value);
-  const type = document.querySelector('input[name="type"]:checked').value.toLowerCase();
+  const type = document
+    .querySelector('main .form-container input[name="type"]:checked')
+    .value.toLowerCase();
   const category = document.querySelector('#category').value.toLowerCase();
   const errorTextElement = document.querySelector('main form .error-message');
 
@@ -45,7 +47,7 @@ document.querySelector('main form').addEventListener('submit', (e) => {
 
   // update counters
   UI.updateListHeader(category);
-  UI.updateListSummary(Store.getList());
+  UI.updateListSummary();
 
   // clear form fields
   UI.clearForm();
@@ -60,23 +62,105 @@ document.querySelector('#list-container .list-summary button').addEventListener(
   UI.clearList();
 });
 
-// Event: remove item from list
+// Event: remove item from list, edit item, expand&shrink list
 document.querySelector('#list-container').addEventListener('click', (e) => {
-  if (!e.target.classList.contains('remove')) return;
+  if (
+    e.target.classList.contains('remove') ||
+    e.target.classList.contains('edit') ||
+    e.target.classList.contains('expand')
+  ) {
+    // get consistent target button element, index and category
+    const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+    const listItem = el.parentElement.parentElement;
+    const category = listItem.parentElement.parentElement
+      .querySelector('.list-header p')
+      .innerHTML.split('<span>')[0]
+      .toLowerCase();
+    const itemsArray = Array.from(listItem.parentNode.children);
+    const index = itemsArray.indexOf(listItem);
 
-  // get consistent target button element, index and category
-  const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
-  const listItem = el.parentElement.parentElement;
-  const category = listItem.parentElement.parentElement
-    .querySelector('.list-header p')
-    .innerHTML.split('<span>')[0]
-    .toLowerCase();
-  const itemsArray = Array.from(listItem.parentNode.children);
-  const index = itemsArray.indexOf(listItem);
+    if (e.target.classList.contains('remove')) {
+      // remove element from store
+      Store.removeProduct(index, category);
+      // remove element from UI and whole category if there are no items left
+      UI.removeProduct(listItem, itemsArray.length - 1);
+      // update header counter
+      if (itemsArray.length - 1 > 0) UI.updateListHeader(category);
+      // update summary counter
+      UI.updateListSummary();
+    } else if (e.target.classList.contains('edit')) {
+      // open modal with form for editting
+      UI.openEditModal(index, category);
+    } else {
+      // update store value
+      Store.toggleCategoryExpand(category);
+      // shrink/expand category list and change icon
+      listItem.querySelector('.list-content').classList.toggle('list-expanded');
+      el.children[0].classList.toggle('fa-caret-up');
+      el.children[0].classList.toggle('fa-caret-down');
+    }
+  }
+});
 
-  // remove element from store
-  Store.removeProduct(index, category);
+// Event: close edit modal
+document.querySelector('.edit-modal .cancel-btn').addEventListener('click', (e) => {
+  // prevent default behaviour
+  e.preventDefault();
+  UI.closeEditModal();
+});
 
-  // remove element from UI and whole category if there are no items left
-  UI.removeProduct(listItem, itemsArray.length - 1);
+// Event: submit edit modal
+document.querySelector('.edit-modal form').addEventListener('submit', (e) => {
+  // prevent default behaviour
+  e.preventDefault();
+
+  // get form values
+  const name = document.querySelector('#name-edit').value.toLowerCase();
+  const amount = Number(document.querySelector('#amount-edit').value);
+  const type = document
+    .querySelector('.edit-modal input[name="type-edit"]:checked')
+    .value.toLowerCase();
+  const category = document.querySelector('#category-edit').value.toLowerCase();
+  const errorTextElement = document.querySelector('.edit-modal .error-message');
+
+  // validate
+  if (!UI.validate(name, amount, category, errorTextElement)) return;
+
+  // get product and update it's values
+  const form = document.querySelector('.edit-modal form');
+  const product = Store.getItem(form.dataset.index, form.dataset.category);
+  product.name = name;
+  product.type = type;
+  product.amount = amount;
+
+  // create new list category if there is no matching list yet
+  if (document.querySelector(`#${category}-list`) === null) {
+    const obj = {
+      category,
+      expand: true,
+      products: [product],
+    };
+
+    // add new category in storage with a product
+    Store.addCategory(obj);
+    // create new list
+    UI.createList(obj);
+    // remove product from previous list
+    Store.removeProduct(form.dataset.index, form.dataset.category);
+  } else if (form.dataset.category !== category) {
+    // change product's category
+    Store.addProduct(product, category);
+    // remove product from previous list
+    Store.removeProduct(form.dataset.index, form.dataset.category);
+  } else {
+    // update product value
+    Store.updateProduct(product, form.dataset.index, category);
+  }
+
+  // reload list
+  UI.clearList();
+  UI.displayList();
+
+  // clear form fields and close modal
+  UI.closeEditModal();
 });

@@ -1,5 +1,4 @@
 #drawer {
-  //display: flex;
   display: none;
   width: 100%;
   position: fixed;
@@ -8,6 +7,10 @@
   background: $primary;
   margin-top: 3em;
   box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.2);
+
+  &.show {
+    display: flex;
+  }
   
   .wrapper {
     display: flex;
@@ -26,7 +29,6 @@
 }
 
 .edit-modal {
-  //display: flex;
   display: none;
   justify-content: center;
   align-items: center;
@@ -36,6 +38,10 @@
   top: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.85);
+
+  &.show {
+    display: flex;
+  }
 
   .form-container {
     width: 500px;
