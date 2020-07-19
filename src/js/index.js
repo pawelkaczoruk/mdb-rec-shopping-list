@@ -172,3 +172,17 @@ document.querySelector('.edit-modal form').addEventListener('submit', (e) => {
   // clear form fields and close modal
   UI.closeEditModal();
 });
+
+// Event: show drawer
+document.querySelector('header button').addEventListener('click', () => {
+  const drawer = document.querySelector('#drawer');
+  drawer.classList.toggle('show');
+});
+
+// Event: print list
+document.querySelector('#print-btn').addEventListener('click', () => {
+  // hide drawer
+  document.querySelector('header button').classList.remove('show');
+  // open print window
+  window.print();
+});

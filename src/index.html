@@ -30,10 +30,10 @@
     <!-- drawer -->
     <div id="drawer">
       <div class="wrapper">
-        <button>Print list</button>
-        <button>Export as pdf</button>
-        <button>Export as csv</button>
-        <button>Export as xml</button>
+        <button id="print-btn">Print list</button>
+        <button id="export-pdf">Export as pdf</button>
+        <button id="export-csv">Export as csv</button>
+        <button id="export-xml">Export as xml</button>
       </div>
     </div>
 
@@ -83,15 +83,18 @@
             <p class="error-message"></p>
             <button type="submit">add</button>
           </form>
-        </div>
+        </div>          
 
-        <!-- shopping lists container -->
-        <div id="list-container">
-          <!-- counter for products -->
-          <div class="list list-summary">
-            <div class="list-header">
-              <p></p>
-              <button><i class="fas fa-trash-alt"></i></button>
+
+        <div id="print-container">
+          <!-- shopping lists container -->
+          <div id="list-container">
+            <!-- counter for products -->
+            <div class="list list-summary">
+              <div class="list-header">
+                <p></p>
+                <button><i class="fas fa-trash-alt"></i></button>
+              </div>
             </div>
           </div>
         </div>
