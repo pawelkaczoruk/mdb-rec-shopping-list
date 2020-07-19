@@ -3,14 +3,15 @@ import Store from './Store';
 // UI class: handles UI tasks
 export default class UI {
   static displayList() {
-    const products = Store.getProducts();
+    const list = Store.getList();
 
-    products.forEach((obj) => {
+    list.forEach((obj) => {
       UI.createList(obj);
       obj.products.map((product) => UI.addProductToList(product, obj.category));
+      UI.updateListHeader(obj.category);
     });
 
-    UI.updateListSummary(products);
+    UI.updateListSummary(list);
   }
 
   static addProductToList(product, category) {
@@ -28,12 +29,12 @@ export default class UI {
     const listSummary = listContainer.querySelector('.list-summary');
     const list = document.createElement('div');
 
-    list.className = 'list';
+    list.className = 'list list-body';
     list.id = `${obj.category}-list`;
     list.innerHTML = `
       <div class="list-header">
         <p>${UI.textFormatter(obj.category)} 
-          <span>(${UI.getTotalProducts(obj.products)})</span>
+          <span></span>
         </p>
         <button>
           <i class="fas fa-caret-${obj.expand ? 'up' : 'down'}"></i>
@@ -44,6 +45,18 @@ export default class UI {
     `;
 
     listContainer.insertBefore(list, listSummary);
+  }
+
+  static clearList() {
+    // remove elements from store
+    Store.clearList();
+
+    // remove elements from DOM
+    const listContainer = document.querySelectorAll('#list-container .list-body');
+    listContainer.forEach((elem) => elem.parentNode.removeChild(elem));
+
+    // update total counter
+    UI.updateListSummary([]);
   }
 
   static createListItem(product) {
@@ -86,15 +99,22 @@ export default class UI {
     return text[0].toUpperCase() + text.slice(1);
   }
 
-  static updateListSummary(products) {
+  static updateListHeader(category) {
+    const list = Store.getList().find((obj) => obj.category === category);
+
+    const textElement = document.querySelector(`#${category}-list .list-header span`);
+    textElement.innerText = `(${UI.getTotalProducts(list.products)})`;
+  }
+
+  static updateListSummary(list) {
     const listSummaryText = document.querySelector('#list-container .list-summary p');
 
-    if (!products.length) {
+    if (!list.length) {
       listSummaryText.innerText = 'Your list is empty';
       return;
     }
 
-    const allProducts = products.reduce((acc, cur) => [...acc, ...cur.products], []);
+    const allProducts = list.reduce((acc, cur) => [...acc, ...cur.products], []);
     listSummaryText.innerText = `Total ${UI.getTotalProducts(allProducts)}`;
   }
 
