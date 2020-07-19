@@ -26,7 +26,7 @@ document.querySelector('main form').addEventListener('submit', (e) => {
   const product = new Product(name, amount, type);
 
   // create new list category if there is no matching list yet
-  if (document.querySelector(`#${category}-list`) === null) {
+  if (document.querySelector(`#list-container div[data-category="${category}"]`) === null) {
     const obj = {
       category,
       expand: true,
@@ -62,20 +62,13 @@ document.querySelector('#list-container .list-summary button').addEventListener(
   UI.clearList();
 });
 
-// Event: remove item from list, edit item, expand&shrink list
+// Event: remove item from list, edit item, expand&shrink list, mark product checked
 document.querySelector('#list-container').addEventListener('click', (e) => {
-  if (
-    e.target.classList.contains('remove') ||
-    e.target.classList.contains('edit') ||
-    e.target.classList.contains('expand')
-  ) {
+  if (e.target.classList.contains('remove') || e.target.classList.contains('edit')) {
     // get consistent target button element, index and category
     const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
     const listItem = el.parentElement.parentElement;
-    const category = listItem.parentElement.parentElement
-      .querySelector('.list-header p')
-      .innerHTML.split('<span>')[0]
-      .toLowerCase();
+    const category = listItem.parentElement.parentElement.dataset.category;
     const itemsArray = Array.from(listItem.parentNode.children);
     const index = itemsArray.indexOf(listItem);
 
@@ -88,17 +81,32 @@ document.querySelector('#list-container').addEventListener('click', (e) => {
       if (itemsArray.length - 1 > 0) UI.updateListHeader(category);
       // update summary counter
       UI.updateListSummary();
-    } else if (e.target.classList.contains('edit')) {
+    } else {
       // open modal with form for editting
       UI.openEditModal(index, category);
-    } else {
-      // update store value
-      Store.toggleCategoryExpand(category);
-      // shrink/expand category list and change icon
-      listItem.querySelector('.list-content').classList.toggle('list-expanded');
-      el.children[0].classList.toggle('fa-caret-up');
-      el.children[0].classList.toggle('fa-caret-down');
     }
+  } else if (e.target.classList.contains('expand')) {
+    // get consistent target button element, index and category
+    const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+    const list = el.parentElement.parentElement;
+    const category = list.dataset.category;
+
+    // shrink/expand category list and change button icon
+    list.querySelector('.list-content').classList.toggle('list-expanded');
+    el.children[0].classList.toggle('fa-caret-up');
+    el.children[0].classList.toggle('fa-caret-down');
+
+    const expanded = list.querySelector('.list-content').classList.contains('list-expanded');
+    // update store value
+    Store.setCategoryExpand(category, expanded);
+  } else if (e.target.classList.contains('checkbox')) {
+    // mark product checked
+    const listItem = e.target.parentElement.parentElement;
+    const category = listItem.parentElement.parentElement.dataset.category;
+    const itemsArray = Array.from(listItem.parentNode.children);
+    const index = itemsArray.indexOf(listItem);
+
+    Store.setProductChecked(index, category, e.target.checked);
   }
 });
 
@@ -134,7 +142,7 @@ document.querySelector('.edit-modal form').addEventListener('submit', (e) => {
   product.amount = amount;
 
   // create new list category if there is no matching list yet
-  if (document.querySelector(`#${category}-list`) === null) {
+  if (document.querySelector(`#list-container div[data-category="${category}"]`) === null) {
     const obj = {
       category,
       expand: true,

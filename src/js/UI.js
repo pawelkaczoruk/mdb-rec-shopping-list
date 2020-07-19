@@ -15,7 +15,9 @@ export default class UI {
   }
 
   static addProductToList(product, category) {
-    const listContent = document.querySelector(`#${category}-list .list-content`);
+    const listContent = document.querySelector(
+      `#list-container div[data-category="${category}"] .list-content`
+    );
     const listItem = document.createElement('div');
 
     listItem.className = 'list-item';
@@ -39,7 +41,7 @@ export default class UI {
     const list = document.createElement('div');
 
     list.className = 'list list-body';
-    list.id = `${obj.category}-list`;
+    list.dataset.category = `${obj.category}`;
     list.innerHTML = `
       <div class="list-header">
         <p>${UI.textFormatter(obj.category)}<span></span></p>
@@ -57,7 +59,7 @@ export default class UI {
   static createListItem(product) {
     return `
       <div class="list-item-content">
-        <input type="checkbox" ${product.checked ? 'checked' : ''}/>
+        <input class="checkbox" type="checkbox" ${product.checked ? 'checked' : ''}/>
         <p>
           <span>${product.amount}</span
           >${product.type === 'items' ? 'x' : ''} ${product.type === 'kg' ? 'kg of' : ''} <span 
@@ -103,7 +105,9 @@ export default class UI {
 
   static updateListHeader(category) {
     const list = Store.getList()[Store.getCategoryIndex(category)];
-    const textElement = document.querySelector(`#${category}-list .list-header span`);
+    const textElement = document.querySelector(
+      `#list-container div[data-category="${category}"] .list-header span`
+    );
     textElement.innerText = ` (${UI.getTotalProducts(list.products)})`;
   }
 

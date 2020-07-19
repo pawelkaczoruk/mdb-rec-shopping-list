@@ -34,9 +34,15 @@ export default class Store {
     localStorage.setItem('list', JSON.stringify(list));
   }
 
-  static toggleCategoryExpand(category) {
+  static setProductChecked(index, category, value) {
     const list = Store.getList();
-    list[Store.getCategoryIndex(category)].expand = !list[Store.getCategoryIndex(category)].expand;
+    list[Store.getCategoryIndex(category)].products[index].checked = value;
+    localStorage.setItem('list', JSON.stringify(list));
+  }
+
+  static setCategoryExpand(category, value) {
+    const list = Store.getList();
+    list[Store.getCategoryIndex(category)].expand = value;
     localStorage.setItem('list', JSON.stringify(list));
   }
 
