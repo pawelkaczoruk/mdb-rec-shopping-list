@@ -1,3 +1,4 @@
+import html2pdf from 'html2pdf.js';
 import Product from './Product';
 import UI from './UI';
 import Store from './Store';
@@ -182,7 +183,15 @@ document.querySelector('header button').addEventListener('click', () => {
 // Event: print list
 document.querySelector('#print-btn').addEventListener('click', () => {
   // hide drawer
-  document.querySelector('header button').classList.remove('show');
+  document.querySelector('#drawer').classList.remove('show');
   // open print window
   window.print();
+});
+
+// Event: export list as pdf
+document.querySelector('#export-pdf').addEventListener('click', () => {
+  // hide drawer
+  document.querySelector('#drawer').classList.remove('show');
+  // download pdf
+  html2pdf(document.querySelector('#print-container'));
 });
