@@ -1,3 +1,4 @@
+import Sortable from 'sortablejs';
 import Store from './Store';
 
 // UI class: handles UI tasks
@@ -54,6 +55,9 @@ export default class UI {
     `;
 
     listContainer.insertBefore(list, listSummary);
+
+    // add drag and drop
+    UI.addSortable(obj.category);
   }
 
   static createListItem(product) {
@@ -97,6 +101,19 @@ export default class UI {
     // remove list if it there are no items left in category else remove product
     if (size === 0) listItem.parentElement.parentElement.remove();
     else listItem.remove();
+  }
+
+  static addSortable(category) {
+    const listBody = document.querySelector(`
+      #list-container div[data-category="${category}"] .list-content`);
+    // add drag and drop using sortable.js
+    Sortable.create(listBody, {
+      animation: 150,
+      draggable: '.list-item',
+      onUpdate: (e) => {
+        Store.changeProductIndex(e.newIndex, e.oldIndex, category);
+      },
+    });
   }
 
   static textFormatter(text) {

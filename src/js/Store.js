@@ -34,6 +34,15 @@ export default class Store {
     localStorage.setItem('list', JSON.stringify(list));
   }
 
+  static changeProductIndex(newIndex, oldIndex, category) {
+    const list = Store.getList();
+    // update list items
+    const item = list[Store.getCategoryIndex(category)].products.splice(oldIndex, 1);
+    list[Store.getCategoryIndex(category)].products.splice(newIndex, 0, item[0]);
+    // apply changes to store
+    localStorage.setItem('list', JSON.stringify(list));
+  }
+
   static setProductChecked(index, category, value) {
     const list = Store.getList();
     list[Store.getCategoryIndex(category)].products[index].checked = value;
