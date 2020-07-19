@@ -54,11 +54,22 @@ document.querySelector('main form').addEventListener('submit', (e) => {
   UI.clearForm();
 });
 
-// Event: clear whole list
+// Event: show alert modal
 document.querySelector('#list-container .list-summary button').addEventListener('click', () => {
+  document.querySelector('.alert-modal').classList.add('show');
+});
+
+// Event: hide alert modal
+document.querySelector('.alert-modal .cancel').addEventListener('click', () => {
+  document.querySelector('.alert-modal').classList.remove('show');
+});
+
+// Event: hide alert modal
+document.querySelector('.alert-modal .confirm').addEventListener('click', () => {
+  // hide modal
+  document.querySelector('.alert-modal').classList.remove('show');
   // remove elements from store
   Store.clearList();
-
   // remove elements from UI
   UI.clearList();
 });

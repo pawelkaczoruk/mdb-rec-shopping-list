@@ -28,7 +28,7 @@
   }
 }
 
-.edit-modal {
+.my-modal {
   display: none;
   justify-content: center;
   align-items: center;
@@ -43,10 +43,6 @@
     display: flex;
   }
 
-  .form-container {
-    width: 500px;
-  }
-
   .button-container {
     width: 100%;
     display: flex;
@@ -57,8 +53,41 @@
     background-color: var(--bs-danger);
 
     &:hover {
-    background-color: $dark-red;
+      background-color: $dark-red;
+    }
+  }
+}
 
+.edit-modal .form-container {
+  width: 500px;
+}
+
+.alert-modal {
+  p {
+    color: var(--bs-gray-dark);
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 1em;
+  }
+
+  .alert-container {
+    justify-content: center;
+    padding: 1em 2em;
+    border-radius: 0.5em;
+    background-color: $light-gray;
+  }
+
+  button {
+    flex: 1;
+    color: white;
+    border-radius: 0.5em;
+
+    &.confirm {
+      background: $green;
+
+      &:hover {
+        background-color: $dark-green;
+      }      
     }
   }
 }
