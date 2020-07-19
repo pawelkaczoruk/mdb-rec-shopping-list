@@ -31,4 +31,21 @@ export default class Store {
   static clearList() {
     localStorage.clear();
   }
+
+  static removeProduct(index, category) {
+    const list = Store.getList();
+
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].category === category) {
+        // remove item from category
+        list[i].products.splice(index, 1);
+
+        // remove whole category if there are no products in it
+        if (!list[i].products.length) list.splice(i, 1);
+        break;
+      }
+    }
+
+    localStorage.setItem('list', JSON.stringify(list));
+  }
 }

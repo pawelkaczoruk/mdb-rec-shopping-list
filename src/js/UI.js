@@ -24,6 +24,15 @@ export default class UI {
     listContent.appendChild(listItem);
   }
 
+  static clearList() {
+    // remove elements from DOM
+    const listContainer = document.querySelectorAll('#list-container .list-body');
+    listContainer.forEach((elem) => elem.remove());
+
+    // update total counter
+    UI.updateListSummary([]);
+  }
+
   static createList(obj) {
     const listContainer = document.querySelector('#list-container');
     const listSummary = listContainer.querySelector('.list-summary');
@@ -33,9 +42,7 @@ export default class UI {
     list.id = `${obj.category}-list`;
     list.innerHTML = `
       <div class="list-header">
-        <p>${UI.textFormatter(obj.category)} 
-          <span></span>
-        </p>
+        <p>${UI.textFormatter(obj.category)}<span></span></p>
         <button>
           <i class="fas fa-caret-${obj.expand ? 'up' : 'down'}"></i>
         </button>
@@ -47,30 +54,19 @@ export default class UI {
     listContainer.insertBefore(list, listSummary);
   }
 
-  static clearList() {
-    // remove elements from store
-    Store.clearList();
-
-    // remove elements from DOM
-    const listContainer = document.querySelectorAll('#list-container .list-body');
-    listContainer.forEach((elem) => elem.parentNode.removeChild(elem));
-
-    // update total counter
-    UI.updateListSummary([]);
-  }
-
   static createListItem(product) {
     return `
       <div class="list-item-content">
         <input type="checkbox" ${product.checked ? 'checked' : ''}/>
-        <p>${product.amount}${product.type === 'items' ? 'x' : ''} 
-        ${product.type === 'kg' ? 'kg of' : ''} 
-        ${UI.textFormatter(product.name)}
+        <p>
+          <span>${product.amount}</span
+          >${product.type === 'items' ? 'x' : ''} ${product.type === 'kg' ? 'kg of' : ''} <span 
+          >${UI.textFormatter(product.name)}</span>
         </p>
       </div>
       <div class="list-item-actions">
-        <button><i class="fas fa-pen"></i></button>
-        <button><i class="fas fa-trash-alt"></i></button>
+        <button class="edit"><i class="edit fas fa-pen"></i></button>
+        <button class="remove"><i class="remove fas fa-trash-alt"></i></button>
       </div>
     `;
   }
@@ -95,6 +91,12 @@ export default class UI {
     document.querySelector('#category').value = '';
   }
 
+  static removeProduct(listItem, size) {
+    // remove list if it there are no items left in category else remove product
+    if (size === 0) listItem.parentElement.parentElement.remove();
+    else listItem.remove();
+  }
+
   static textFormatter(text) {
     return text[0].toUpperCase() + text.slice(1);
   }
@@ -103,7 +105,7 @@ export default class UI {
     const list = Store.getList().find((obj) => obj.category === category);
 
     const textElement = document.querySelector(`#${category}-list .list-header span`);
-    textElement.innerText = `(${UI.getTotalProducts(list.products)})`;
+    textElement.innerText = ` (${UI.getTotalProducts(list.products)})`;
   }
 
   static updateListSummary(list) {
