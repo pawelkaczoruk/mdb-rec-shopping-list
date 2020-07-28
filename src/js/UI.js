@@ -1,21 +1,9 @@
+import html2pdf from 'html2pdf.js';
 import Sortable from 'sortablejs';
+import Product from './Product';
 import Store from './Store';
 
-// UI class: handles UI tasks
 export default class UI {
-  static displayList() {
-    const list = Store.getList();
-
-    list.forEach((obj) => {
-      UI.createList(obj);
-      obj.products.map((product) => UI.addProductToList(product, obj.category));
-      UI.updateListHeader(obj.category);
-    });
-
-    UI.updateListSummary();
-    UI.addSortable();
-  }
-
   static addProductToList(product, category) {
     const listContent = document.querySelector(
       `#list-container div[data-category="${category}"] .list-content`
@@ -28,13 +16,59 @@ export default class UI {
     listContent.appendChild(listItem);
   }
 
-  static clearList() {
-    // remove elements from DOM
-    const listContainer = document.querySelectorAll('#list-container .list-body');
-    listContainer.forEach((elem) => elem.remove());
+  static addSortable(category = null) {
+    let container;
+    let item;
 
-    // update total counter
-    UI.updateListSummary();
+    if (!category) {
+      container = document.querySelector('#list-container');
+      item = '.list-body';
+    } else {
+      container = document.querySelector(`
+      #list-container div[data-category="${category}"] .list-content`);
+      item = '.list-item';
+    }
+
+    Sortable.create(container, {
+      animation: 150,
+      draggable: item,
+      onUpdate: (e) => {
+        if (category === null) Store.changeListIndex(e.newIndex, e.oldIndex);
+        else Store.changeProductIndex(e.newIndex, e.oldIndex, category);
+      },
+    });
+  }
+
+  static clearForm(form) {
+    form.querySelector('.name-input').value = '';
+    form.querySelector('.amount-input').value = '';
+    form.querySelector('.category-input').value = '';
+  }
+
+  static clearList() {
+    document.querySelectorAll('#list-container .list-body').forEach((list) => list.remove());
+    UI.updateSummary();
+  }
+
+  static closeEditModal() {
+    const form = document.querySelector('#edit-form');
+    form.removeAttribute('data-index');
+    form.removeAttribute('data-category');
+    document.querySelector('.edit-modal').classList.remove('show');
+  }
+
+  static init() {
+    const list = Store.getList();
+
+    list.forEach((obj) => {
+      UI.createList(obj);
+      obj.products.map((product) => UI.addProductToList(product, obj.category));
+      UI.updateListHeader(obj.category);
+    });
+
+    UI.updateSummary();
+    UI.addSortable();
+    UI.setupListeners();
   }
 
   static createList(obj) {
@@ -92,40 +126,10 @@ export default class UI {
     }`;
   }
 
-  static clearForm() {
-    document.querySelector('#name').value = '';
-    document.querySelector('#amount').value = '';
-    document.querySelector('#category').value = '';
-  }
-
   static removeProduct(listItem, size) {
     // remove list if it there are no items left in category else remove product
     if (size === 0) listItem.parentElement.parentElement.remove();
     else listItem.remove();
-  }
-
-  static addSortable(category = null) {
-    let container;
-    let item;
-
-    if (category === null) {
-      container = document.querySelector('#list-container');
-      item = '.list-body';
-    } else {
-      container = document.querySelector(`
-      #list-container div[data-category="${category}"] .list-content`);
-      item = '.list-item';
-    }
-
-    // add drag and drop using sortable.js
-    Sortable.create(container, {
-      animation: 150,
-      draggable: item,
-      onUpdate: (e) => {
-        if (category === null) Store.changeListIndex(e.newIndex, e.oldIndex);
-        else Store.changeProductIndex(e.newIndex, e.oldIndex, category);
-      },
-    });
   }
 
   static textFormatter(text) {
@@ -140,49 +144,182 @@ export default class UI {
     textElement.innerText = ` (${UI.getTotalProducts(list.products)})`;
   }
 
-  static updateListSummary() {
+  static updateSummary() {
     const list = Store.getList();
-    const listSummaryText = document.querySelector('#list-container .list-summary p');
+    const text = document.querySelector('#list-container .list-summary p');
 
     if (!list.length) {
-      listSummaryText.innerText = 'Your list is empty';
+      text.innerText = 'Your list is empty';
       return;
     }
 
     const allProducts = list.reduce((acc, cur) => [...acc, ...cur.products], []);
-    listSummaryText.innerText = `Total ${UI.getTotalProducts(allProducts)}`;
+    text.innerText = `Total ${UI.getTotalProducts(allProducts)}`;
   }
 
-  static closeEditModal() {
-    document.querySelector('.edit-modal').classList.remove('show');
+  static setEditFormValues(index, productCategory) {
+    const product = Store.getItem(index, productCategory);
 
-    // clear form inputs
-    document.querySelector('#name-edit').value = '';
-    document.querySelector('#amount-edit').value = '';
-    document.querySelector('#category-edit').value = '';
-
-    const form = document.querySelector('.edit-modal form');
-    // clear data atributes
-    form.removeAttribute('data-index');
-    form.removeAttribute('data-category');
+    document.querySelector('#edit-form .name-input').value = UI.textFormatter(product.name);
+    document.querySelector('#edit-form .amount-input').value = product.amount;
+    document.querySelector(`#edit-form input[value="${product.type}"]`).checked = true;
+    document.querySelector('#edit-form .category-input').value = UI.textFormatter(productCategory);
   }
 
   static openEditModal(index, productCategory) {
     document.querySelector('.edit-modal').classList.add('show');
+    UI.setEditFormValues(index, productCategory);
 
-    // get selected product from store
-    const product = Store.getItem(index, productCategory);
-
-    // set form inputs
-    document.querySelector('#name-edit').value = UI.textFormatter(product.name);
-    document.querySelector('#amount-edit').value = product.amount;
-    document.querySelector(`#${product.type}-edit`).checked = true;
-    document.querySelector('#category-edit').value = UI.textFormatter(productCategory);
-
-    const form = document.querySelector('.edit-modal form');
-    // save information in data atribute for ediding product
+    const form = document.querySelector('#edit-form');
     form.dataset.index = index;
     form.dataset.category = productCategory;
+  }
+
+  static setupListeners() {
+    document.querySelector('#add-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const form = document.querySelector('#add-form');
+      const name = form.querySelector('.name-input').value.toLowerCase();
+      const amount = Number(form.querySelector('.amount-input').value);
+      const type = form.querySelector('input[name="type"]:checked').value.toLowerCase();
+      const category = form.querySelector('.category-input').value.toLowerCase();
+      const errorTextElement = form.querySelector('.error-message');
+
+      if (!UI.validate(name, amount, category, errorTextElement)) return;
+
+      const product = new Product(name, amount, type);
+
+      if (document.querySelector(`#list-container div[data-category="${category}"]`) === null) {
+        const obj = {
+          category,
+          expand: true,
+          products: [product],
+        };
+
+        Store.addCategory(obj);
+        UI.createList(obj);
+      } else {
+        Store.addProduct(product, category);
+      }
+
+      UI.addProductToList(product, category);
+      UI.updateListHeader(category);
+      UI.updateSummary();
+      UI.clearForm(document.querySelector('#add-form'));
+    });
+
+    document.querySelector('#list-container .list-summary button').addEventListener('click', () => {
+      document.querySelector('.alert-modal').classList.add('show');
+    });
+
+    document.querySelector('.alert-modal .cancel').addEventListener('click', () => {
+      document.querySelector('.alert-modal').classList.remove('show');
+    });
+
+    document.querySelector('.alert-modal .confirm').addEventListener('click', () => {
+      document.querySelector('.alert-modal').classList.remove('show');
+      Store.clearList();
+      UI.clearList();
+    });
+
+    document.querySelector('#list-container').addEventListener('click', (e) => {
+      if (e.target.classList.contains('remove') || e.target.classList.contains('edit')) {
+        const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+        const listItem = el.parentElement.parentElement;
+        const category = listItem.parentElement.parentElement.dataset.category;
+        const itemsArray = Array.from(listItem.parentNode.children);
+        const index = itemsArray.indexOf(listItem);
+
+        if (e.target.classList.contains('remove')) {
+          Store.removeProduct(index, category);
+          UI.removeProduct(listItem, itemsArray.length - 1);
+          if (itemsArray.length - 1 > 0) UI.updateListHeader(category);
+          UI.updateSummary();
+        } else {
+          UI.openEditModal(index, category);
+        }
+      } else if (e.target.classList.contains('expand')) {
+        const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+        const list = el.parentElement.parentElement;
+        const category = list.dataset.category;
+
+        list.querySelector('.list-content').classList.toggle('list-expanded');
+        el.children[0].classList.toggle('fa-caret-up');
+        el.children[0].classList.toggle('fa-caret-down');
+
+        const expanded = list.querySelector('.list-content').classList.contains('list-expanded');
+        Store.setCategoryExpand(category, expanded);
+      } else if (e.target.classList.contains('checkbox')) {
+        const listItem = e.target.parentElement.parentElement;
+        const category = listItem.parentElement.parentElement.dataset.category;
+        const itemsArray = Array.from(listItem.parentNode.children);
+        const index = itemsArray.indexOf(listItem);
+
+        Store.setProductChecked(index, category, e.target.checked);
+      }
+    });
+
+    document.querySelector('.edit-modal .cancel-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      UI.clearForm(document.querySelector('#edit-form'));
+      UI.closeEditModal();
+    });
+
+    document.querySelector('#edit-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const form = document.querySelector('#edit-form');
+      const name = form.querySelector('.name-input').value.toLowerCase();
+      const amount = Number(form.querySelector('.amount-input').value);
+      const type = form.querySelector('input[name="type"]:checked').value.toLowerCase();
+      const category = form.querySelector('.category-input').value.toLowerCase();
+      const errorTextElement = form.querySelector('.error-message');
+
+      if (!UI.validate(name, amount, category, errorTextElement)) return;
+
+      const product = Store.getItem(form.dataset.index, form.dataset.category);
+      product.name = name;
+      product.type = type;
+      product.amount = amount;
+
+      if (document.querySelector(`#list-container div[data-category="${category}"]`) === null) {
+        const obj = {
+          category,
+          expand: true,
+          products: [product],
+        };
+
+        Store.addCategory(obj);
+        UI.createList(obj);
+        Store.removeProduct(form.dataset.index, form.dataset.category);
+      } else if (form.dataset.category !== category) {
+        Store.addProduct(product, category);
+        Store.removeProduct(form.dataset.index, form.dataset.category);
+      } else {
+        Store.updateProduct(product, form.dataset.index, category);
+      }
+
+      UI.clearList();
+      UI.init();
+      UI.clearForm(document.querySelector('#edit-form'));
+      UI.closeEditModal();
+    });
+
+    document.querySelector('header button').addEventListener('click', () => {
+      const drawer = document.querySelector('#drawer');
+      drawer.classList.toggle('show');
+    });
+
+    document.querySelector('#print-btn').addEventListener('click', () => {
+      document.querySelector('#drawer').classList.remove('show');
+      window.print();
+    });
+
+    document.querySelector('#export-pdf').addEventListener('click', () => {
+      document.querySelector('#drawer').classList.remove('show');
+      html2pdf(document.querySelector('#print-container'));
+    });
   }
 
   static showError(messages, textElement) {

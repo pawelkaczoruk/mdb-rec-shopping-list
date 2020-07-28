@@ -1,4 +1,3 @@
-// Product class: represents a product
 export default class Product {
   constructor(name, amount, type) {
     this.name = name;

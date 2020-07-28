@@ -39,32 +39,38 @@
       <div class="wrapper">
         <!-- form container -->
         <div class="form-container">
-          <form>
+          <form id="add-form">
             <div class="input-wrapper">
-              <label for="name">product</label>
-              <input type="text" id="name" placeholder="eg. Milk" />
+              <label>
+                product
+                <input class="name-input" type="text" placeholder="eg. Milk" />
+              </label>
             </div>
 
             <div class="input-wrapper">
-              <label for="amount">amount</label>
-              <input type="number" id="amount" step="0.001" placeholder="eg. 1" />
+              <label>
+                amount
+                <input class="amount-input" type="number" step="0.001" placeholder="eg. 1" />
+              </label>
             </div>
 
             <div class="radio-group">
-              <label for="items">
+              <label>
                 items
-                <input type="radio" id="items" name="type" value="items" checked />
+                <input type="radio" name="type" value="items" checked />
               </label>
 
-              <label for="kg">
+              <label>
                 kg
-                <input type="radio" id="kg" name="type" value="kg" />
+                <input type="radio" name="type" value="kg" />
               </label>
             </div>
 
             <div class="input-wrapper">
-              <label for="category">category</label>
-              <input type="text" list="category-list" id="category" placeholder="eg. Dairy" />
+              <label>
+                category
+                <input class="category-input" type="text" list="category-list" placeholder="eg. Dairy" />
+              </label>
               <datalist id="category-list">
                 <option value="Bakery"></option>
                 <option value="Vegetables"></option>
@@ -102,37 +108,38 @@
     <!-- modal for editing product -->
     <div class="edit-modal my-modal">
       <div class="form-container">
-        <form>
+        <form id="edit-form">
           <div class="input-wrapper">
-            <label for="name-edit">product</label>
-            <input type="text" id="name-edit" placeholder="eg. Milk" />
+            <label>
+              product
+              <input class="name-input" type="text" placeholder="eg. Milk" />
+            </label>
           </div>
 
           <div class="input-wrapper">
-            <label for="amount-edit">amount</label>
-            <input type="number" step="0.001" id="amount-edit" placeholder="eg. 1" />
+            <label>
+              amount
+              <input class="amount-input" type="number" step="0.001" placeholder="eg. 1" />
+            </label>
           </div>
 
           <div class="radio-group">
-            <label for="items-edit">
+            <label>
               items
-              <input type="radio" id="items-edit" name="type-edit" value="items" checked />
+              <input type="radio" name="type" value="items" checked />
             </label>
 
-            <label for="kg-edit">
+            <label>
               kg
-              <input type="radio" id="kg-edit" name="type-edit" value="kg" />
+              <input type="radio" name="type" value="kg" />
             </label>
           </div>
 
           <div class="input-wrapper">
-            <label for="category-edit">category</label>
-            <input
-              type="text"
-              list="category-list-edit"
-              id="category-edit"
-              placeholder="eg. Dairy"
-            />
+            <label>
+              category
+              <input class="category-input" type="text" list="category-list-edit" placeholder="eg. Dairy" />
+            </label>
             <datalist id="category-list-edit">
               <option value="Bakery"></option>
               <option value="Vegetables"></option>

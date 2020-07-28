@@ -1,4 +1,3 @@
-// Store class: handles storage
 export default class Store {
   static getList() {
     let list;
