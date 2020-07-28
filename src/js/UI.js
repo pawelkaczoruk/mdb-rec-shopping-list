@@ -96,6 +96,16 @@ export default class UI {
     `;
   }
 
+  static getFormContent(form) {
+    return {
+      name: form.querySelector('.name-input').value.toLowerCase(),
+      amount: Number(form.querySelector('.amount-input').value),
+      type: form.querySelector('input[name="type"]:checked').value.toLowerCase(),
+      category: form.querySelector('.category-input').value.toLowerCase(),
+      textElement: form.querySelector('.error-message'),
+    };
+  }
+
   static getTotalProducts(productList) {
     const total = productList.reduce((acc, product) => {
       if (!acc.hasOwnProperty(product.type)) acc[product.type] = 0;
@@ -185,26 +195,21 @@ export default class UI {
     document.querySelector('#add-form').addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const form = document.querySelector('#add-form');
-      const name = form.querySelector('.name-input').value.toLowerCase();
-      const amount = Number(form.querySelector('.amount-input').value);
-      const type = form.querySelector('input[name="type"]:checked').value.toLowerCase();
-      const category = form.querySelector('.category-input').value.toLowerCase();
-      const errorTextElement = form.querySelector('.error-message');
+      const formContent = UI.getFormContent(document.querySelector('#add-form'));
+      if (!UI.validate(formContent)) return;
 
-      if (!UI.validate(name, amount, category, errorTextElement)) return;
+      const product = new Product(formContent);
+      const category = formContent.category;
 
-      const product = new Product(name, amount, type);
-
-      if (document.querySelector(`#list-container div[data-category="${category}"]`) === null) {
-        const obj = {
+      if (document.querySelector(`div[data-category="${category}"]`) === null) {
+        const listEl = {
           category,
           expand: true,
           products: [product],
         };
 
-        Store.addCategory(obj);
-        UI.createList(obj);
+        Store.addCategory(listEl);
+        UI.createList(listEl);
       } else {
         Store.addProduct(product, category);
       }
@@ -215,29 +220,31 @@ export default class UI {
       UI.clearForm(document.querySelector('#add-form'));
     });
 
-    document.querySelector('#list-container .list-summary button').addEventListener('click', () => {
+    document.querySelector('.list-summary button').addEventListener('click', () => {
       document.querySelector('.alert-modal').classList.add('show');
     });
 
-    document.querySelector('.alert-modal .cancel').addEventListener('click', () => {
+    document.querySelector('.alert-modal .cancel-btn').addEventListener('click', () => {
       document.querySelector('.alert-modal').classList.remove('show');
     });
 
-    document.querySelector('.alert-modal .confirm').addEventListener('click', () => {
+    document.querySelector('.alert-modal .confirm-btn').addEventListener('click', () => {
       document.querySelector('.alert-modal').classList.remove('show');
       Store.clearList();
       UI.clearList();
     });
 
-    document.querySelector('#list-container').addEventListener('click', (e) => {
-      if (e.target.classList.contains('remove') || e.target.classList.contains('edit')) {
-        const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+    document.querySelector('#list-container').addEventListener('click', ({ target }) => {
+      const classList = target.classList;
+
+      if (classList.contains('remove') || classList.contains('edit')) {
+        const el = target.tagName === 'BUTTON' ? target : target.parentNode;
         const listItem = el.parentElement.parentElement;
         const category = listItem.parentElement.parentElement.dataset.category;
         const itemsArray = Array.from(listItem.parentNode.children);
         const index = itemsArray.indexOf(listItem);
 
-        if (e.target.classList.contains('remove')) {
+        if (classList.contains('remove')) {
           Store.removeProduct(index, category);
           UI.removeProduct(listItem, itemsArray.length - 1);
           if (itemsArray.length - 1 > 0) UI.updateListHeader(category);
@@ -246,8 +253,8 @@ export default class UI {
           UI.openEditModal(index, category);
           UI.setEditFormValues(index, category);
         }
-      } else if (e.target.classList.contains('expand')) {
-        const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+      } else if (classList.contains('expand')) {
+        const el = target.tagName === 'BUTTON' ? target : target.parentNode;
         const list = el.parentElement.parentElement;
         const category = list.dataset.category;
 
@@ -257,19 +264,20 @@ export default class UI {
 
         const expanded = list.querySelector('.list-content').classList.contains('list-expanded');
         Store.toggleListExpand(category, expanded);
-      } else if (e.target.classList.contains('checkbox')) {
-        const listItem = e.target.parentElement.parentElement;
+      } else if (classList.contains('checkbox')) {
+        const listItem = target.parentElement.parentElement;
         const category = listItem.parentElement.parentElement.dataset.category;
         const itemsArray = Array.from(listItem.parentNode.children);
         const index = itemsArray.indexOf(listItem);
 
-        Store.toggleProductChecked(index, category, e.target.checked);
+        Store.toggleProductChecked(index, category, target.checked);
       }
     });
 
     document.querySelector('.edit-modal .cancel-btn').addEventListener('click', (e) => {
       e.preventDefault();
       UI.clearForm(document.querySelector('#edit-form'));
+      UI.hideError(document.querySelector('#edit-form .error-message'));
       UI.closeEditModal();
     });
 
@@ -277,46 +285,43 @@ export default class UI {
       e.preventDefault();
 
       const form = document.querySelector('#edit-form');
-      const name = form.querySelector('.name-input').value.toLowerCase();
-      const amount = Number(form.querySelector('.amount-input').value);
-      const type = form.querySelector('input[name="type"]:checked').value.toLowerCase();
-      const category = form.querySelector('.category-input').value.toLowerCase();
-      const errorTextElement = form.querySelector('.error-message');
+      const formContent = UI.getFormContent(form);
+      if (!UI.validate(formContent)) return;
 
-      if (!UI.validate(name, amount, category, errorTextElement)) return;
+      const newCategory = formContent.category;
+      const oldCategory = form.dataset.editCategory;
+      const index = form.dataset.editIndex;
+      const product = Store.getItem(index, form.dataset.editCategory);
 
-      const product = Store.getItem(form.dataset.editIndex, form.dataset.editCategory);
+      product.name = formContent.name;
+      product.type = formContent.type;
+      product.amount = formContent.amount;
 
-      product.name = name;
-      product.type = type;
-      product.amount = amount;
-
-      if (document.querySelector(`div[data-category="${category}"]`) === null) {
-        const obj = {
-          category,
+      if (document.querySelector(`div[data-category="${newCategory}"]`) === null) {
+        const listEl = {
+          category: newCategory,
           expand: true,
           products: [product],
         };
 
-        Store.addCategory(obj);
-        UI.createList(obj);
-        Store.removeProduct(form.dataset.editIndex, form.dataset.editCategory);
-      } else if (form.dataset.editCategory !== category) {
-        Store.addProduct(product, category);
-        Store.removeProduct(form.dataset.editIndex, form.dataset.editCategory);
+        Store.addCategory(listEl);
+        UI.createList(listEl);
+        Store.removeProduct(index, oldCategory);
+      } else if (oldCategory !== newCategory) {
+        Store.addProduct(product, newCategory);
+        Store.removeProduct(index, oldCategory);
       } else {
-        Store.updateProduct(product, form.dataset.editIndex, category);
+        Store.updateProduct(product, index, newCategory);
       }
 
       UI.clearList();
       UI.init();
-      UI.clearForm(document.querySelector('#edit-form'));
+      UI.clearForm(form);
       UI.closeEditModal();
     });
 
     document.querySelector('header button').addEventListener('click', () => {
-      const drawer = document.querySelector('#drawer');
-      drawer.classList.toggle('show');
+      document.querySelector('#drawer').classList.toggle('show');
     });
 
     document.querySelector('#print-btn').addEventListener('click', () => {
@@ -330,7 +335,7 @@ export default class UI {
     });
   }
 
-  static validate(name, amount, category, textElement) {
+  static validate({ name, amount, category, textElement }) {
     const errorMessages = [];
 
     if (name === '') errorMessages.push('name is required');

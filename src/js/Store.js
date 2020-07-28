@@ -1,8 +1,8 @@
 export default class Store {
-  static addCategory(category) {
+  static addCategory(listEl) {
     const list = Store.getList();
 
-    list.push(category);
+    list.push(listEl);
     localStorage.setItem('list', JSON.stringify(list));
   }
 
@@ -49,7 +49,7 @@ export default class Store {
   }
 
   static getItem(index, category) {
-    return Store.getList().list[Store.getCategoryIndex(category)].products[index];
+    return Store.getList()[Store.getCategoryIndex(category)].products[index];
   }
 
   static getList() {
