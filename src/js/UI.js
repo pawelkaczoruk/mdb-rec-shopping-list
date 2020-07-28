@@ -5,9 +5,7 @@ import Store from './Store';
 
 export default class UI {
   static addProductToList(product, category) {
-    const listContent = document.querySelector(
-      `#list-container div[data-category="${category}"] .list-content`
-    );
+    const listContent = document.querySelector(`div[data-category="${category}"] .list-content`);
     const listItem = document.createElement('div');
 
     listItem.className = 'list-item';
@@ -24,8 +22,7 @@ export default class UI {
       container = document.querySelector('#list-container');
       item = '.list-body';
     } else {
-      container = document.querySelector(`
-      #list-container div[data-category="${category}"] .list-content`);
+      container = document.querySelector(`div[data-category="${category}"] .list-content`);
       item = '.list-item';
     }
 
@@ -46,53 +43,40 @@ export default class UI {
   }
 
   static clearList() {
-    document.querySelectorAll('#list-container .list-body').forEach((list) => list.remove());
+    document.querySelectorAll('.list-body').forEach((list) => list.remove());
     UI.updateSummary();
   }
 
   static closeEditModal() {
     const form = document.querySelector('#edit-form');
-    form.removeAttribute('data-index');
-    form.removeAttribute('data-category');
+
+    form.removeAttribute('data-edit-index');
+    form.removeAttribute('data-edit-category');
+
     document.querySelector('.edit-modal').classList.remove('show');
   }
 
-  static init() {
-    const list = Store.getList();
-
-    list.forEach((obj) => {
-      UI.createList(obj);
-      obj.products.map((product) => UI.addProductToList(product, obj.category));
-      UI.updateListHeader(obj.category);
-    });
-
-    UI.updateSummary();
-    UI.addSortable();
-    UI.setupListeners();
-  }
-
-  static createList(obj) {
+  static createList(listEl) {
     const listContainer = document.querySelector('#list-container');
     const listSummary = listContainer.querySelector('.list-summary');
     const list = document.createElement('div');
 
     list.className = 'list list-body';
-    list.dataset.category = `${obj.category}`;
+    list.dataset.category = `${listEl.category}`;
     list.innerHTML = `
       <div class="list-header">
-        <p>${UI.textFormatter(obj.category)}<span></span></p>
+        <p>${UI.textFormatter(listEl.category)}<span class="list-header-total"></span></p>
         <button class="expand">
-          <i class="expand fas fa-caret-${obj.expand ? 'up' : 'down'}"></i>
+          <i class="expand fas fa-caret-${listEl.expand ? 'up' : 'down'}"></i>
         </button>
       </div>
-      <div class="list-content ${obj.expand ? 'list-expanded' : ''}">
+      <div class="list-content ${listEl.expand ? 'list-expanded' : ''}">
       </div>
     `;
 
     listContainer.insertBefore(list, listSummary);
 
-    // add drag and drop
-    UI.addSortable(obj.category);
+    UI.addSortable(listEl.category);
   }
 
   static createListItem(product) {
@@ -112,11 +96,11 @@ export default class UI {
     `;
   }
 
-  static getTotalProducts(list) {
-    const total = list.reduce((obj, cur) => {
-      if (!obj.hasOwnProperty(cur.type)) obj[cur.type] = 0;
-      obj[cur.type] += cur.amount;
-      return obj;
+  static getTotalProducts(productList) {
+    const total = productList.reduce((acc, product) => {
+      if (!acc.hasOwnProperty(product.type)) acc[product.type] = 0;
+      acc[product.type] += product.amount;
+      return acc;
     }, {});
 
     return `${
@@ -126,10 +110,50 @@ export default class UI {
     }`;
   }
 
+  static hideError(textElement) {
+    textElement.classList.remove('show');
+    textElement.innerText = '';
+  }
+
+  static init() {
+    const list = Store.getList();
+
+    list.forEach((listEl) => {
+      UI.createList(listEl);
+      listEl.products.forEach((product) => UI.addProductToList(product, listEl.category));
+      UI.updateListHeader(listEl.category);
+    });
+
+    UI.updateSummary();
+    UI.addSortable();
+  }
+
+  static openEditModal(index, category) {
+    const form = document.querySelector('#edit-form');
+
+    form.dataset.editIndex = index;
+    form.dataset.editCategory = category;
+
+    document.querySelector('.edit-modal').classList.add('show');
+  }
+
   static removeProduct(listItem, size) {
-    // remove list if it there are no items left in category else remove product
     if (size === 0) listItem.parentElement.parentElement.remove();
     else listItem.remove();
+  }
+
+  static setEditFormValues(index, category) {
+    const product = Store.getItem(index, category);
+
+    document.querySelector('#edit-form .name-input').value = UI.textFormatter(product.name);
+    document.querySelector('#edit-form .amount-input').value = product.amount;
+    document.querySelector(`#edit-form input[value="${product.type}"]`).checked = true;
+    document.querySelector('#edit-form .category-input').value = UI.textFormatter(category);
+  }
+
+  static showError(messages, textElement) {
+    textElement.classList.add('show');
+    textElement.innerText = messages.join(', ');
   }
 
   static textFormatter(text) {
@@ -137,42 +161,24 @@ export default class UI {
   }
 
   static updateListHeader(category) {
-    const list = Store.getList()[Store.getCategoryIndex(category)];
-    const textElement = document.querySelector(
-      `#list-container div[data-category="${category}"] .list-header span`
-    );
-    textElement.innerText = ` (${UI.getTotalProducts(list.products)})`;
+    const products = Store.getList()[Store.getCategoryIndex(category)].products;
+
+    document.querySelector(
+      `div[data-category="${category}"] .list-header-total`
+    ).innerText = ` (${UI.getTotalProducts(products)})`;
   }
 
   static updateSummary() {
     const list = Store.getList();
-    const text = document.querySelector('#list-container .list-summary p');
+    const text = document.querySelector('.list-summary-text');
 
     if (!list.length) {
       text.innerText = 'Your list is empty';
       return;
     }
 
-    const allProducts = list.reduce((acc, cur) => [...acc, ...cur.products], []);
-    text.innerText = `Total ${UI.getTotalProducts(allProducts)}`;
-  }
-
-  static setEditFormValues(index, productCategory) {
-    const product = Store.getItem(index, productCategory);
-
-    document.querySelector('#edit-form .name-input').value = UI.textFormatter(product.name);
-    document.querySelector('#edit-form .amount-input').value = product.amount;
-    document.querySelector(`#edit-form input[value="${product.type}"]`).checked = true;
-    document.querySelector('#edit-form .category-input').value = UI.textFormatter(productCategory);
-  }
-
-  static openEditModal(index, productCategory) {
-    document.querySelector('.edit-modal').classList.add('show');
-    UI.setEditFormValues(index, productCategory);
-
-    const form = document.querySelector('#edit-form');
-    form.dataset.index = index;
-    form.dataset.category = productCategory;
+    const productList = list.reduce((acc, cur) => [...acc, ...cur.products], []);
+    text.innerText = `Total ${UI.getTotalProducts(productList)}`;
   }
 
   static setupListeners() {
@@ -238,6 +244,7 @@ export default class UI {
           UI.updateSummary();
         } else {
           UI.openEditModal(index, category);
+          UI.setEditFormValues(index, category);
         }
       } else if (e.target.classList.contains('expand')) {
         const el = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
@@ -249,14 +256,14 @@ export default class UI {
         el.children[0].classList.toggle('fa-caret-down');
 
         const expanded = list.querySelector('.list-content').classList.contains('list-expanded');
-        Store.setCategoryExpand(category, expanded);
+        Store.toggleListExpand(category, expanded);
       } else if (e.target.classList.contains('checkbox')) {
         const listItem = e.target.parentElement.parentElement;
         const category = listItem.parentElement.parentElement.dataset.category;
         const itemsArray = Array.from(listItem.parentNode.children);
         const index = itemsArray.indexOf(listItem);
 
-        Store.setProductChecked(index, category, e.target.checked);
+        Store.toggleProductChecked(index, category, e.target.checked);
       }
     });
 
@@ -278,12 +285,13 @@ export default class UI {
 
       if (!UI.validate(name, amount, category, errorTextElement)) return;
 
-      const product = Store.getItem(form.dataset.index, form.dataset.category);
+      const product = Store.getItem(form.dataset.editIndex, form.dataset.editCategory);
+
       product.name = name;
       product.type = type;
       product.amount = amount;
 
-      if (document.querySelector(`#list-container div[data-category="${category}"]`) === null) {
+      if (document.querySelector(`div[data-category="${category}"]`) === null) {
         const obj = {
           category,
           expand: true,
@@ -292,12 +300,12 @@ export default class UI {
 
         Store.addCategory(obj);
         UI.createList(obj);
-        Store.removeProduct(form.dataset.index, form.dataset.category);
-      } else if (form.dataset.category !== category) {
+        Store.removeProduct(form.dataset.editIndex, form.dataset.editCategory);
+      } else if (form.dataset.editCategory !== category) {
         Store.addProduct(product, category);
-        Store.removeProduct(form.dataset.index, form.dataset.category);
+        Store.removeProduct(form.dataset.editIndex, form.dataset.editCategory);
       } else {
-        Store.updateProduct(product, form.dataset.index, category);
+        Store.updateProduct(product, form.dataset.editIndex, category);
       }
 
       UI.clearList();
@@ -320,16 +328,6 @@ export default class UI {
       document.querySelector('#drawer').classList.remove('show');
       html2pdf(document.querySelector('#print-container'));
     });
-  }
-
-  static showError(messages, textElement) {
-    textElement.classList.add('show');
-    textElement.innerText = messages.join(', ');
-  }
-
-  static hideError(textElement) {
-    textElement.classList.remove('show');
-    textElement.innerText = '';
   }
 
   static validate(name, amount, category, textElement) {
