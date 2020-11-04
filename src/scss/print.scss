@@ -17,9 +17,8 @@
   }
 
   header {
-    position: absolute;
+    @include position(absolute, $z-index: 2000);
     box-shadow: none;
-    z-index: 2000;
   }
 
   main {
@@ -27,13 +26,10 @@
   }
 
   #print-container {
+    @include position(absolute, $top: 0, $left: 0, $z-index: 999);
     width: 100%;
-    background-color: white;
-    position: absolute;
-    top: 0;
-    left: 0;
     padding: 6em 6em 1em 6em;
-    z-index: 999;
+    background-color: white;
   }
 
   .list-content {
@@ -44,7 +40,8 @@
     border-top: 1px solid $primary-light;
   }
 
-  button, .my-modal.show {
+  button,
+  .my-modal.show {
     display: none;
   }
 }

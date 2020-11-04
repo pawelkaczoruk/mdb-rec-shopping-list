@@ -5,21 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>Shopping List</title>
-    <!-- Favicon -->
     <link rel="icon" href="#" type="image/x-icon" />
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
-    <!-- Google Fonts Roboto -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
     />
-    <!-- Main css file -->
     <link rel="stylesheet" href="css/index.min.css" />
   </head>
 
   <body>
-    <!-- app bar -->
     <header>
       <div class="wrapper">
         <h1><i class="fas fa-stream"></i> Shopping <span>List</span></h1>
@@ -27,7 +22,6 @@
       </div>
     </header>
 
-    <!-- drawer -->
     <div id="drawer">
       <div class="wrapper">
         <button id="print-btn">Print list</button>
@@ -37,7 +31,6 @@
 
     <main>
       <div class="wrapper">
-        <!-- form container -->
         <div class="form-container">
           <form id="add-form">
             <label>
@@ -64,30 +57,32 @@
 
             <label>
               category
-              <input class="category-input" type="text" list="category-list" placeholder="eg. Dairy" />
+              <input
+                class="category-input"
+                type="text"
+                list="category-list"
+                placeholder="eg. Dairy"
+              />
             </label>
             <datalist id="category-list">
               <option value="Bakery"></option>
-              <option value="Vegetables"></option>
-              <option value="Fruits"></option>
-              <option value="Dairy"></option>
-              <option value="Meat"></option>
               <option value="Cleaners"></option>
-              <option value="Personal Care"></option>
-              <option value="Paper Goods"></option>
+              <option value="Dairy"></option>
+              <option value="Fruits"></option>
+              <option value="Meat"></option>
               <option value="Other"></option>
+              <option value="Paper Goods"></option>
+              <option value="Personal Care"></option>
+              <option value="Vegetables"></option>
             </datalist>
 
             <p class="error-message"></p>
             <button type="submit">add</button>
           </form>
-        </div>          
-
+        </div>
 
         <div id="print-container">
-          <!-- shopping lists container -->
           <div id="list-container">
-            <!-- counter for products -->
             <div class="list list-summary">
               <div class="list-header">
                 <p class="list-summary-text"></p>
@@ -99,7 +94,6 @@
       </div>
     </main>
 
-    <!-- modal for editing product -->
     <div class="edit-modal my-modal">
       <div class="form-container">
         <form id="edit-form">
@@ -127,7 +121,12 @@
 
           <label>
             category
-            <input class="category-input" type="text" list="category-list-edit" placeholder="eg. Dairy" />
+            <input
+              class="category-input"
+              type="text"
+              list="category-list-edit"
+              placeholder="eg. Dairy"
+            />
           </label>
           <datalist id="category-list-edit">
             <option value="Bakery"></option>
@@ -150,7 +149,6 @@
       </div>
     </div>
 
-    <!-- modal for alert before clearing whole list -->
     <div class="alert-modal my-modal">
       <div class="alert-container">
         <p>are you sure to clear whole list?</p>
@@ -161,6 +159,6 @@
       </div>
     </div>
   </body>
-  <!-- Main js file -->
+
   <script type="text/javascript" src="js/index.min.js"></script>
 </html>

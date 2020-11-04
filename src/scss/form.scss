@@ -1,25 +1,21 @@
 .form-container {
+  @include text($dark-gray, 1.2rem, 500);
   padding: 1em;
   border-radius: 0.5em;
-  background-color: $light-gray;
-  color: var(--bs-gray-dark);
-  font-weight: 500;
-  font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto;
+  background-color: $light-gray;
   overflow: hidden;
 
   form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    @include flex($align: center, $direction: column);
   }
 
   input {
-    border: 1px solid var(--bs-gray-dark);
+    border: 1px solid $dark-gray;
     padding-left: 0.5em;
     flex: 1;
-    color: var(--bs-gray-dark);
+    color: $dark-gray;
 
     &[type='text'],
     &[type='number'] {
@@ -38,9 +34,9 @@
   }
 
   button {
-    background-color: $green;
-    color: white;
     width: 100%;
+    color: white;
+    background-color: $green;
 
     &:hover {
       background-color: $dark-green;
@@ -61,12 +57,9 @@
   }
 
   .error-message {
+    @include text($red, 0.7em, 500, center);
     display: none;
     padding-bottom: 0.5rem;
-    font-size: 0.7em;
-    font-weight: 500;
-    color: red;
-    text-align: center;
 
     &.show {
       display: block;

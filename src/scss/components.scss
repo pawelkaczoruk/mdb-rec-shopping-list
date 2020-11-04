@@ -1,27 +1,32 @@
+.wrapper {
+  position: relative;
+  height: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 5px;
+}
+
 #drawer {
+  @include position(fixed, $z-index: 10);
   display: none;
   width: 100%;
-  position: fixed;
-  z-index: 10;
-  right: 0;
-  background: $primary;
   margin-top: 3em;
+  background: $primary;
   box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.2);
 
   &.show {
     display: flex;
   }
-  
+
   .wrapper {
-    display: flex;
-    justify-content: center;
+    @include flex(center);
     flex-wrap: wrap;
   }
 
   button {
     padding: 0.5em 2em;
     color: white;
-    
+
     &:hover {
       background-color: rgba(0, 0, 0, 0.15);
     }
@@ -29,28 +34,24 @@
 }
 
 .my-modal {
+  @include rect(100%, 100%);
+  @include position(fixed, $top: 0, $bottom: 0);
   display: none;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  bottom: 0;
   background-color: rgba(0, 0, 0, 0.85);
 
   &.show {
-    display: flex;
+    @include flex(center, center);
   }
 
   .button-container {
-    width: 100%;
     display: flex;
+    width: 100%;
+    margin-top: 0.5em;
   }
 
   button:first-of-type {
     margin-right: 0.5em;
-    background-color: var(--bs-danger);
+    background-color: $red;
 
     &:hover {
       background-color: $dark-red;
@@ -64,14 +65,11 @@
 
 .alert-modal {
   p {
-    color: var(--bs-gray-dark);
-    font-weight: 500;
-    text-align: center;
+    @include text($dark-gray, $weight: 500, $align: center);
     margin-bottom: 1em;
   }
 
   .alert-container {
-    justify-content: center;
     padding: 1em 2em;
     border-radius: 0.5em;
     background-color: $light-gray;
@@ -79,15 +77,15 @@
 
   button {
     flex: 1;
-    color: white;
     border-radius: 0.5em;
+    color: white;
 
     &.confirm-btn {
       background: $green;
 
       &:hover {
         background-color: $dark-green;
-      }      
+      }
     }
   }
 }

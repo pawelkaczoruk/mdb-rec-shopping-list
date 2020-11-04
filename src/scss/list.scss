@@ -5,10 +5,10 @@
   overflow: hidden;
 }
 
-.list-item, .list-header, .list-item-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.list-item,
+.list-header,
+.list-item-content {
+  @include flex(space-between, center);
 }
 
 .list-content {
@@ -19,7 +19,8 @@
   display: block;
 }
 
-.list-item, .list-header {
+.list-item,
+.list-header {
   padding: 0.3em 1em;
   min-height: 2.5em;
 }
@@ -28,9 +29,7 @@
   background-color: $primary;
 
   p {
-    font-weight: 500;
-    font-size: 1.2em;
-    color: white;
+    @include text(white, 1.2em, 500);
   }
 
   span {
@@ -38,11 +37,8 @@
   }
 
   button {
+    @include rect(2rem, 2rem, 50%);
     color: white;
-    font-size: 1.2em;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.15);
@@ -65,9 +61,7 @@
   }
 
   p {
-    font-size: 1.1em;
-    font-weight: 400;
-    color: var(--bs-gray-dark);
+    @include text($dark-gray, 1.1em, 400);
   }
 }
 
@@ -75,14 +69,12 @@
   min-width: 60px;
 
   button {
-    color: var(--bs-gray-dark);
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
+    @include rect(1.75rem, 1.75rem, 50%);
+    color: $dark-gray;
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.15);
-      
+
       i {
         color: black;
       }
@@ -100,6 +92,7 @@
   }
 }
 
-.list-item, .list-body .list-header {
+.list-item,
+.list-body .list-header {
   cursor: move;
 }
